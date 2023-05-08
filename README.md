@@ -2,7 +2,7 @@
 
 ## Run the app
 
-To run the app, simply run `docker compose up` to deploy both the `app` and `model-service` container.
+To run the app, simply run `docker compose up` to deploy both the `app` and `model-service` container. The frontend interface is available in http://localhost:8080/
 
 ## App
 The [webapp](https://github.com/remla23-team10/app) is a simple Spring app with two endpoints:
