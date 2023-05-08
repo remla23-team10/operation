@@ -4,4 +4,9 @@ services:
     ports:
       - 8080:8080
     environment:
-      - MODEL-SERVICE-HOST=modelservice
+      - MODEL-SERVICE-URL=http://model-service:8080
+  
+  model-service:
+    image: ghcr.io/remla23-team10/model-service
+    ports:
+      - 8081:8080
