@@ -1,12 +1,12 @@
 services:
   app:
-    image: ghcr.io/remla23-team10/app
+    image: ghcr.io/remla23-team10/app:0.1.0
     ports:
       - 8080:8080
     environment:
       - MODEL-SERVICE-URL=http://model-service:8080
   
   model-service:
-    image: ghcr.io/remla23-team10/model-service
+    image: ghcr.io/remla23-team10/model-service:0.0.1
     ports:
       - 8081:8080
