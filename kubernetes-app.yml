@@ -1,13 +1,7 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: remla23-team10
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app-deployment
-  namespace: remla23-team10
 spec:
   replicas: 1
   selector:
@@ -24,14 +18,13 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: MODEL-SERVICE-HOST
-              value: modelservice
+            - name: MODEL-SERVICE-URL
+              value: http://modelservice-service
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: modelservice-deployment
-  namespace: remla23-team10
 spec:
   replicas: 1
   selector:
@@ -52,7 +45,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: app-service
-  namespace: remla23-team10
+  labels:
+    app: app
 spec:
   selector:
     app: app
@@ -66,7 +60,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: modelservice-service
-  namespace: remla23-team10
 spec:
   selector:
     app: modelservice
@@ -80,10 +73,23 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: app-ingress
-  namespace: remla23-team10
 spec:
   defaultBackend:
     service:
       name: app-service
       port:
         number: 8080
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mymonitor
+  labels:
+    release: myprom
+spec:
+  selector:
+    matchLabels:
+      app: app
+  endpoints:
+  - interval: 30s
+    path: /actuator/prometheus
