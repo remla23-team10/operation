@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+{{- with .Values.deployments.webapp }}
+metadata:
+  name: {{.name}}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{.selectorLabel}}
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers: 
+        - name: {{.podname}}
+          image: "{{ .repository }}:{{ .tag }}"
+          ports:
+            - containerPort: {{.port}}
+          env:
+            - name: MODEL-SERVICE-URL
+              value: "http://{{ $.Values.services.modelService.name }}:{{ $.Values.services.modelService.port }}"
+{{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+{{- with .Values.deployments.modelService }}
+metadata:
+  name: {{.name}}
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{.selectorLabel}}
+  template:
+    metadata:
+      labels:
+        app: modelservice
+    spec:
+      containers:  
+        - name: {{.podname}}
+          image: "{{ .repository }}:{{ .tag }}"
+          ports:
+            - containerPort: {{.port}}
+{{- end }}

@@ -1,0 +1,30 @@
+---            
+apiVersion: v1
+kind: Service
+{{- with .Values.services.webapp }}
+metadata:
+  name: {{ .name }}
+  labels:
+    app: app
+spec:
+  selector:
+    app: {{ $.Values.deployments.webapp.selectorLabel }}
+  ports:
+    - name: http
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+{{- with .Values.services.modelService }}
+metadata:
+  name: {{ .name }}
+spec:
+  selector:
+    app: {{ $.Values.deployments.modelService.selectorLabel }}
+  ports:
+    - name: http
+      port: {{ .port }}
+      targetPort: {{ .targetPort }}
+{{- end }}

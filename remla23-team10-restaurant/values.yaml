@@ -1,0 +1,42 @@
+# Default values for remla23-team10-restaurant.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+deployments:
+  webapp:
+    name: app-deployment
+    podname: app
+    selectorLabel: app
+    repository: ghcr.io/remla23-team10/app
+    tag: latest
+    port: 8080
+
+  modelService:
+    name: modelservice-deployment
+    podname: modelservice
+    selectorLabel: modelservice
+    repository: ghcr.io/remla23-team10/model-service
+    tag: latest
+    port: 8080
+
+services:
+  webapp:
+    name: app-service
+    port: 80
+    targetPort: 8080
+  
+  modelService:
+    name: modelservice-service
+    port: 80
+    targetPort: 8080
+
+serviceMonitor:
+  name: app-service-monitor
+  interval: 30s
+
+ingress:
+  name: app-ingress
+
+deploy-prom-stack: true

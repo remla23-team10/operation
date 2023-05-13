@@ -78,7 +78,7 @@ spec:
     service:
       name: app-service
       port:
-        number: 8080
+        number: 80
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
