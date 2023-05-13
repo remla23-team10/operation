@@ -40,3 +40,21 @@ ingress:
   name: app-ingress
 
 deploy-prom-stack: true
+
+# Prometheus stack config
+kube-prometheus-stack:
+
+  # Main prometheus configuration
+  prometheus:
+    # Enable ingress and set path to prometheus
+    ingress:
+      enabled: true
+      paths:
+        - /prometheus
+    
+  # Similar configuration should exist for grafana
+  # grafana:
+  #   ingress:
+  #     enabled: true
+  #     paths:
+  #       - /grafana
