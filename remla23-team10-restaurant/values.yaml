@@ -47,6 +47,7 @@ kube-prometheus-stack:
       GF_SERVER_SERVE_FROM_SUB_PATH: 'true'
     # username is 'admin'
     adminPassword: prom-operator
+    defaultDashboardsEnabled: false
     ingress:
       enabled: true
       annotations:
