@@ -18,3 +18,10 @@ The [model-service](https://github.com/remla23-team10/model-service) is a simple
 - The [preprocessing.py](https://github.com/remla23-team10/model-service/blob/main/preprocessing.py) file contains a class that loads the Bag of Words vectorizer and abstract preprocessing logic from the main REST app. This file is copied from `mode-training`.
 
 - The binaries for the model and the vectorizer are loaded from URL, hardcoding the url of the RAW file from Github (e.g. https://github.com/remla23-team10/model-training/raw/main/Classifier_Sentiment_Model).
+
+## Grafana
+
+Grafana is automatically deployed along with Prometheus using the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack) chart.
+* Grafana is available on localhost/grafana. 
+* User and password are defaults according to the values https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+* Putting any dashboards (JSON format) in "remla23-team10-restaurant/dashboards" will automatically import them into Grafana on deployment.
