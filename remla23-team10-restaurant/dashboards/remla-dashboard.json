@@ -80,7 +80,7 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "count by(correct) (review_size)",
+          "expr": "sum by(correct) (review_size_count)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
