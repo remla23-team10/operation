@@ -1,4 +1,3 @@
-# Default values for remla23-team10-restaurant.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -40,3 +39,18 @@ ingress:
   name: app-ingress
 
 deploy-prom-stack: true
+
+kube-prometheus-stack:
+  grafana:
+    env:
+      GF_SERVER_ROOT_URL: https://localhost:3000/grafana
+      GF_SERVER_SERVE_FROM_SUB_PATH: 'true'
+    # username is 'admin'
+    adminPassword: prom-operator
+    defaultDashboardsEnabled: false
+    ingress:
+      enabled: true
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+      path: "/grafana(/|$)(.*)"
