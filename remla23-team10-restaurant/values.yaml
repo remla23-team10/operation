@@ -38,15 +38,16 @@ serviceMonitor:
 ingress:
   name: app-ingress
 
+# Deploy the prometheus stack. Can be disabled if you already have a prometheus stack deployed
 deploy-prom-stack: true
 
 # alertmanager config
 alertConfig:
   severity: warning # minimum level of severity for notification
 
-# Email configurations. Example using gmail
+# List of email configurations. Example using gmail
   emails:
-    - name: enriquebarba97              # name of the config
+    - name: user                        # name of the config
       to: user@gmail.com                # email to send notifications to
       from: reveiver@example.com        # email to send notifications from
       smtp: smtp.gmail.com:587          # smtp server and port
@@ -61,10 +62,11 @@ kube-prometheus-stack:
         resolve_timeout: 1m
         # Default smpt server. Ideally same as one of the configs above, but it does not matter
         # since it will use the values from the config.
-        # However, the alertmanager refuses to start if there is at least an email config
+        # However, the alertmanager refuses to start if there is at least one email reveiver
         # and not a global default smtp server. https://github.com/prometheus/alertmanager/issues/275
         smtp_smarthost: smtp.gmail.com:587
 
+  # Grafana configuration
   grafana:
     env:
       GF_SERVER_ROOT_URL: https://localhost:3000/grafana
