@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    release: {{ .Release.Name }}
+  name: restaurant-sentiment
+spec:
+  groups:
+    - name: "restaurant-sentiment.rules"
+      rules:
+        - alert: HighPredictionError
+          expr: (sum(rate(review_size_count{correct="false"}[1m]))/sum(rate(review_size_count[1m]))) > 0.5
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: Too many prediction errors
+            description: "The rate of prediction errors is greater than 50% in the last minute (current value: {{"{{ $value }}"}})."
