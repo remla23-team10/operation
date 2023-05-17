@@ -1,10 +1,13 @@
 # Restaurant review sentiment predictor
 
-1.[Run the app](#run-the-app)
+1. [Run the app](#run-the-app)
     * [Docker compose](#docker-compose)
     * [Helm chart](#helm-chart)
 2. [App](#app)
 3. [Model service](#model-service)
+4. [Prometheus](#prometheus)
+5. [Grafana](#grafana)
+
 ## Run the app
 
 ### Docker compose
@@ -55,6 +58,6 @@ Our configuration also includes a Prometheus alert that fires in case of an incr
 ## Grafana
 
 Grafana is automatically deployed along with Prometheus using the [kube-prometheus-stack](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack) chart.
-* Grafana is available on localhost/grafana. 
-* User and password are defaults according to the values https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+* Grafana is available on http://localhost/grafana. 
+* User (admin) and password (prom-operator) are defaults according to the [values](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml) of the original chart. They can be changed on our `values.yaml`.
 * Putting any dashboards (JSON format) in "remla23-team10-restaurant/dashboards" will automatically import them into Grafana on deployment.
