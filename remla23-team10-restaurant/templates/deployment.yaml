@@ -2,16 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 {{- with .Values.deployments.webapp }}
 metadata:
-  name: {{.name}}
+  name: {{.name}}-v1
 spec:
   replicas: {{ $.Values.replicaCount }}
   selector:
     matchLabels:
       app: {{.selectorLabel}}
+      version: v1
+      sidecar.istio.io/inject: "true"
   template:
     metadata:
       labels:
         app: app
+        version: v1
+        sidecar.istio.io/inject: "true"
     spec:
       containers: 
         - name: {{.podname}}
@@ -22,6 +26,35 @@ spec:
             - name: MODEL-SERVICE-URL
               value: "http://{{ $.Values.services.modelService.name }}:{{ $.Values.services.modelService.port }}"
 {{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+  {{- with .Values.deployments.webapp }}
+metadata:
+  name: {{.name}}-v0
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{.selectorLabel}}
+      version: v0
+      sidecar.istio.io/inject: "true"
+  template:
+    metadata:
+      labels:
+        app: app
+        version: v0
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:
+        - name: {{.podname}}
+          image: "{{ .repository }}:0.1.0"
+          ports:
+            - containerPort: {{.port}}
+          env:
+            - name: MODEL-SERVICE-URL
+              value: "http://{{ $.Values.services.modelService.name }}:{{ $.Values.services.modelService.port }}"
+  {{- end }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,6 +70,7 @@ spec:
     metadata:
       labels:
         app: modelservice
+        sidecar.istio.io/inject: "true"
     spec:
       containers:  
         - name: {{.podname}}
