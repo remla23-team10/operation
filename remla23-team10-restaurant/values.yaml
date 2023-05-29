@@ -35,8 +35,6 @@ serviceMonitor:
   name: app-service-monitor
   interval: 30s
 
-ingress:
-  name: app-ingress
 
 # Deploy the prometheus stack. Can be disabled if you already have a prometheus stack deployed
 deploy-prom-stack: true
@@ -56,6 +54,11 @@ alertConfig:
       # See https://support.google.com/accounts/answer/185833?hl=en for more info on Gmail app passwords
 
 kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      externalUrl: http://localhost/prometheus
+      routePrefix: /prometheus
+
   alertmanager:
     config:
       global:
@@ -74,9 +77,3 @@ kube-prometheus-stack:
     # username is 'admin'
     adminPassword: prom-operator
     defaultDashboardsEnabled: false
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: nginx
-        nginx.ingress.kubernetes.io/rewrite-target: /$2
-      path: "/grafana(/|$)(.*)"
