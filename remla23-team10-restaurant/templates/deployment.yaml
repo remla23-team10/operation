@@ -1,117 +1,61 @@
+{{- $webapp := .Values.deployments.webapp }}
+{{- range $tag := $webapp.tags }}
 apiVersion: apps/v1
 kind: Deployment
-{{- with .Values.deployments.webapp }}
 metadata:
-  name: {{.name}}-v1
+  name: {{ $webapp.name }}-{{ $tag.version }}
 spec:
   replicas: {{ $.Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{.selectorLabel}}
-      version: v1
+      app: {{ $webapp.selectorLabel }}
+      version: {{ $tag.version }}
       sidecar.istio.io/inject: "true"
   template:
     metadata:
       labels:
-        app: app
-        version: v1
-        sidecar.istio.io/inject: "true"
-    spec:
-      containers: 
-        - name: {{.podname}}
-          image: "{{ .repository }}:{{ .tagCE }}"
-          ports:
-            - containerPort: {{.port}}
-          env:
-            - name: MODEL-SERVICE-URL
-              value: "http://{{ $.Values.services.modelService.name }}:{{ $.Values.services.modelService.port }}"
-{{- end }}
----
-apiVersion: apps/v1
-kind: Deployment
-  {{- with .Values.deployments.webapp }}
-metadata:
-  name: {{.name}}-v0
-spec:
-  replicas: {{ $.Values.replicaCount }}
-  selector:
-    matchLabels:
-      app: {{.selectorLabel}}
-      version: v0
-      sidecar.istio.io/inject: "true"
-  template:
-    metadata:
-      labels:
-        app: app
-        version: v0
+        app: {{ $webapp.selectorLabel }}
+        version: {{ $tag.version }}
         sidecar.istio.io/inject: "true"
     spec:
       containers:
-        - name: {{.podname}}
-          image: "{{ .repository }}:{{ .tag }}"
+        - name: {{ $webapp.podname }}
+          image: "{{ $webapp.repository }}:{{ $tag.tag }}"
           ports:
-            - containerPort: {{.port}}
+            - containerPort: {{ $webapp.port }}
           env:
             - name: MODEL-SERVICE-URL
               value: "http://{{ $.Values.services.modelService.name }}:{{ $.Values.services.modelService.port }}"
-  {{- end }}
 ---
-apiVersion: apps/v1
-kind: Deployment
-{{- with .Values.deployments.modelService }}
-metadata:
-  name: {{.name}}-v1
-spec:
-  replicas: {{ $.Values.replicaCount }}
-  selector:
-    matchLabels:
-      app: {{.selectorLabel}}
-      version: v1
-  template:
-    metadata:
-      labels:
-        app: modelservice
-        version: v1
-        sidecar.istio.io/inject: "true"
-    spec:
-      containers:  
-        - name: {{.podname}}
-          image: "{{ .repository }}:{{ .tagCE }}"
-          ports:
-            - containerPort: {{.port}}
-          env:
-            - name: CLASSIFIER_URL
-              value: "{{ .classifierUrl }}"
-            - name: VECTORIZER_URL
-              value: "{{ .vectorizerUrl }}"
 {{- end }}
----
+{{- $modelService := .Values.deployments.modelService }}
+{{- range $tag := $modelService.tags }}
 apiVersion: apps/v1
 kind: Deployment
-{{- with .Values.deployments.modelService }}
 metadata:
-  name: {{.name}}-v0
+  name: {{ $modelService.name }}-{{ $tag.version }}
 spec:
   replicas: {{ $.Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{.selectorLabel}}
-      version: v0
+      app: {{ $modelService.selectorLabel }}
+      version: {{ $tag.version }}
   template:
     metadata:
       labels:
-        app: modelservice
-        version: v0
+        app: {{ $modelService.selectorLabel }}
+        version: {{ $tag.version }}
         sidecar.istio.io/inject: "true"
     spec:
-      containers:  
-        - name: {{.podname}}
-          image: "{{ .repository }}:{{ .tag }}"
+      containers:
+        - name: {{ $modelService.podname }}
+          image: "{{ $modelService.repository }}:{{ $tag.tag }}"
           ports:
-            - containerPort: {{.port}}
+            - containerPort: {{ $modelService.port }}
           env:
             - name: CLASSIFIER_URL
-              value: "{{ .classifierUrl }}"
+              value: "{{ $modelService.classifierUrl }}"
             - name: VECTORIZER_URL
-              value: "{{ .vectorizerUrl }}"
+              value: "{{ $modelService.vectorizerUrl }}"
+---
 {{- end }}
