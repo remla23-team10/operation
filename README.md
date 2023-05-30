@@ -1,14 +1,61 @@
 # Restaurant review sentiment predictor
 
-1. [Run the app](#run-the-app)
+1. [Continuous experimentation](#continuous-experimentation-a3)
+2. [Run the app (A2)](#run-the-app-a2)
     * [Docker compose](#docker-compose)
     * [Helm chart](#helm-chart)
-2. [App](#app)
-3. [Model service](#model-service)
-4. [Prometheus](#prometheus)
-5. [Grafana](#grafana)
+3. [App](#app)
+4. [Model service](#model-service)
+5. [Prometheus](#prometheus)
+6. [Grafana](#grafana)
 
-## Run the app
+## Continuous experimentation (A3)
+
+The Helm Chart has been modified to deploy a continuous experimentation environment in Kubernetes using Istio. To use the older instructions for assignment 2, go to the `a2` tag. The old instructions will not work with the new Helm chart.
+
+### Prerequisites
+Install Istio in the Kubernetes cluster.
+
+### Install
+
+To run the app, simply run the following in the chart folder:
+
+```sh
+# Add prometheus repo if not added
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+# Update dependencies of the chart
+helm dependency build
+
+# Install
+helm install [RELEASE_NAME] .
+```
+### Experiment - Incremental training
+
+The experiment we want to perform with a continuous experimentation system is to see if we can improve the classifier with online learning. We will collect reviews with feedback submitted to the app, and send them using a button in the history panel. The research question we aim to answer is:
+
+**Will the accuracy of the model increase if we incorporate the feedback received through the app?**
+
+To do this, we deploy a stable and experimental versions of the `app` and `model-service`:
+
+- The experimental `app` includes a button "Incremental training", that sends every review and feedback received to the model through a REST endpoint. Sent feedback is marked, so it is not sent again.
+
+- The experimental `model-service` includes a new endpoint, that receives a list of feedback, that includes text, prediction and correctnes. Then, it uses this data to further train the model.
+
+The following image shows the Istio architecture, where `v0` indicates the stable version,  and `v1` the experimental version:
+![Alt text](img/istio-config.png)
+
+The different users are assigned to one of the versions with the following rules:
+
+- If the HTTP request contains a cookie `ce-version=v0` or `ce-version=v1`, the user is redirected to the `v0` or `v1` deployment.
+
+- If the HTTP request does not contain this cookie, or if it has a different value, the user is randomly directed to `v0` or `v1`, each with a 50% chance. Istio adds a header indicating the choice, and this is intercepted by the `app`, which will set the correspondent cookie in the response, so the version is fixed in subsequent requests.
+
+If you want to test one version or the other, it is recommended to manually set the cookie in the browser inspector.
+
+During this experiment, we monitor accuracy scores of both versions, which is obtained from user feedback. If our hypothesis is correct, we should see that the average accuracy of the experimental version should increase with time, given enough review samples and feedback.
+
+## Run the app (A2)
 
 ### Docker compose
 
