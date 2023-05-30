@@ -19,7 +19,7 @@ spec:
     spec:
       containers: 
         - name: {{.podname}}
-          image: "{{ .repository }}:{{ .tag }}"
+          image: "{{ .repository }}:{{ .tagCE }}"
           ports:
             - containerPort: {{.port}}
           env:
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
         - name: {{.podname}}
-          image: "{{ .repository }}:0.1.0"
+          image: "{{ .repository }}:{{ .tag }}"
           ports:
             - containerPort: {{.port}}
           env:
@@ -60,16 +60,48 @@ apiVersion: apps/v1
 kind: Deployment
 {{- with .Values.deployments.modelService }}
 metadata:
-  name: {{.name}}
+  name: {{.name}}-v1
 spec:
   replicas: {{ $.Values.replicaCount }}
   selector:
     matchLabels:
       app: {{.selectorLabel}}
+      version: v1
   template:
     metadata:
       labels:
         app: modelservice
+        version: v1
+        sidecar.istio.io/inject: "true"
+    spec:
+      containers:  
+        - name: {{.podname}}
+          image: "{{ .repository }}:{{ .tagCE }}"
+          ports:
+            - containerPort: {{.port}}
+          env:
+            - name: CLASSIFIER_URL
+              value: "{{ .classifierUrl }}"
+            - name: VECTORIZER_URL
+              value: "{{ .vectorizerUrl }}"
+{{- end }}
+---
+apiVersion: apps/v1
+kind: Deployment
+{{- with .Values.deployments.modelService }}
+metadata:
+  name: {{.name}}-v0
+spec:
+  replicas: {{ $.Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{.selectorLabel}}
+      version: v0
+  template:
+    metadata:
+      labels:
+        app: modelservice
+        version: v0
         sidecar.istio.io/inject: "true"
     spec:
       containers:  

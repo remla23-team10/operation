@@ -16,6 +16,7 @@ spec:
             host: {{.Release.Name}}-kube-prometheus-stac-prometheus
             port:
               number: 9090
+
     - match:
         - uri:
             prefix: /grafana
@@ -24,14 +25,25 @@ spec:
             host: {{.Release.Name}}-grafana
             port:
               number: 80
+
     - match:
         - headers:
-            x-user-version:
-              exact: "v0"
+            cookie:
+              regex: ^(.*;.)?(ce-version=v0)(;.*)?$
       route:
         - destination:
             host: {{$.Values.services.webapp.name}}
             subset: v0
+    
+    - match:
+        - headers:
+            cookie:
+              regex: ^(.*;.)?(ce-version=v1)(;.*)?$
+      route:
+        - destination:
+            host: {{$.Values.services.webapp.name}}
+            subset: v1
+            
     - match:
         - uri:
             prefix: /
@@ -39,3 +51,36 @@ spec:
         - destination:
             host: {{$.Values.services.webapp.name}}
             subset: v1
+          weight: 50
+          headers:
+            request:
+              add:
+                set-ce-version: v1
+        - destination:
+            host: {{$.Values.services.webapp.name}}
+            subset: v0
+          weight: 50
+          headers:
+            request:
+              add:
+                set-ce-version: v0
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: modelservice-vs
+spec:
+  hosts:
+  - {{$.Values.services.modelService.name}}
+  http:
+  - match:
+    - sourceLabels:
+        version: v1
+    route:
+    - destination:
+        host: {{$.Values.services.modelService.name}}
+        subset: v1
+  - route:
+    - destination:
+        host: {{$.Values.services.modelService.name}}
+        subset: v0
