@@ -43,4 +43,9 @@ spec:
           image: "{{ .repository }}:{{ .tag }}"
           ports:
             - containerPort: {{.port}}
+          env:
+            - name: CLASSIFIER_URL
+              value: "{{ .classifierUrl }}"
+            - name: VECTORIZER_URL
+              value: "{{ .vectorizerUrl }}"
 {{- end }}
