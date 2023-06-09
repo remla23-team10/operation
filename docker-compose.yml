@@ -9,7 +9,7 @@ services:
   model-service:
     image: ghcr.io/remla23-team10/model-service
     environment:
-      - CLASSIFIER_URL=https://github.com/remla23-team10/model-training/raw/f3325ef89c0245cc94fdcadcecee45e9b8a560b7/models/Classifier_Sentiment_Model.joblib
-      - VECTORIZER_URL=https://github.com/remla23-team10/model-training/raw/f3325ef89c0245cc94fdcadcecee45e9b8a560b7/data/processed/BoW_Vectorizer.joblib
+      - CLASSIFIER_URL=https://github.com/remla23-team10/model-training/releases/download/latest/BoW_Vectorizer.joblib
+      - VECTORIZER_URL=https://github.com/remla23-team10/model-training/releases/download/latest/Classifier_Sentiment_Model.joblib
     ports:
       - 8081:8080
