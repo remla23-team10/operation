@@ -9,7 +9,11 @@ deployments:
     podname: app
     selectorLabel: app
     repository: ghcr.io/remla23-team10/app
-    tag: latest
+    tags:
+      - tag: 1.2.1
+        version: v0
+      - tag: 1.3.0 # tagCE
+        version: v1
     port: 8080
 
   modelService:
@@ -17,7 +21,11 @@ deployments:
     podname: modelservice
     selectorLabel: modelservice
     repository: ghcr.io/remla23-team10/model-service
-    tag: latest
+    tags:
+      - tag: 1.1.0
+        version: v0
+      - tag: 1.2.1 # tagCE
+        version: v1
     classifierUrl: https://github.com/remla23-team10/model-training/raw/f3325ef89c0245cc94fdcadcecee45e9b8a560b7/models/Classifier_Sentiment_Model.joblib
     vectorizerUrl: https://github.com/remla23-team10/model-training/raw/f3325ef89c0245cc94fdcadcecee45e9b8a560b7/data/processed/BoW_Vectorizer.joblib
     port: 8080
@@ -37,8 +45,6 @@ serviceMonitor:
   name: app-service-monitor
   interval: 30s
 
-ingress:
-  name: app-ingress
 
 # Deploy the prometheus stack. Can be disabled if you already have a prometheus stack deployed
 deploy-prom-stack: true
@@ -58,6 +64,11 @@ alertConfig:
       # See https://support.google.com/accounts/answer/185833?hl=en for more info on Gmail app passwords
 
 kube-prometheus-stack:
+  prometheus:
+    prometheusSpec:
+      externalUrl: http://localhost/prometheus
+      routePrefix: /prometheus
+
   alertmanager:
     config:
       global:
@@ -76,9 +87,3 @@ kube-prometheus-stack:
     # username is 'admin'
     adminPassword: prom-operator
     defaultDashboardsEnabled: false
-    ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/ingress.class: nginx
-        nginx.ingress.kubernetes.io/rewrite-target: /$2
-      path: "/grafana(/|$)(.*)"

@@ -20,6 +20,8 @@ kind: Service
 {{- with .Values.services.modelService }}
 metadata:
   name: {{ .name }}
+  labels:
+    app: modelservice
 spec:
   selector:
     app: {{ $.Values.deployments.modelService.selectorLabel }}
