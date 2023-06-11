@@ -1,13 +1,31 @@
 # Restaurant review sentiment predictor
 
-1. [Continuous experimentation](#continuous-experimentation-a3)
-2. [Run the app (A2)](#run-the-app-a2)
+1. [Infrastructure touch up](#infrastructure-touch-up-a6)
+2. [Continuous experimentation](#continuous-experimentation-a3)
+3. [Run the app (A2)](#run-the-app-a2)
     * [Docker compose](#docker-compose)
     * [Helm chart](#helm-chart)
-3. [App](#app)
-4. [Model service](#model-service)
-5. [Prometheus](#prometheus)
-6. [Grafana](#grafana)
+4. [App](#app)
+5. [Model service](#model-service)
+6. [Prometheus](#prometheus)
+7. [Grafana](#grafana)
+
+## Infrastructure touch up (A6)
+
+The Helm chart has been modified to not include the kube-prometheus-stack dependency. This dependency is not a prerequisite to run our core
+application. As such we have put the template files for Istio, Prometheus and Grafana behind feature flags in values.yaml.
+The user of this chart therefore has the option to choose if they want to use these infrastructure and monitoring tools for their
+own cluster.
+
+Here are documentation links for some of the most common monitoring and infrastructure applications:
+* [Istio](https://istio.io/latest/docs/setup/getting-started/) and [Integration](https://istio.io/latest/docs/ops/integrations/)
+* [Kube Prometheus Stack](https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack)
+* [Jaeger](https://www.jaegertracing.io/docs/1.46/getting-started/)
+* [Kiali](https://kiali.io/docs/installation/quick-start/)
+* [Prometheus](https://prometheus.io/docs/prometheus/latest/getting_started/)
+* [Grafana](https://grafana.com/docs/grafana/latest/getting-started/)
+
+
 
 ## Continuous experimentation (A3)
 
