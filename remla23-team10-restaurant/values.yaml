@@ -46,44 +46,25 @@ serviceMonitor:
   interval: 30s
 
 
-# Deploy the prometheus stack. Can be disabled if you already have a prometheus stack deployed
-deploy-prom-stack: true
-
-# alertmanager config
-alertConfig:
-  severity: warning # minimum level of severity for notification
-
-# List of email configurations. Example using gmail
-  emails:
-    - name: user                        # name of the config
-      to: user@gmail.com                # email to send notifications to
-      from: reveiver@example.com        # email to send notifications from
-      smtp: smtp.gmail.com:587          # smtp server and port
-      username: user@gmail.com          # identity for smtp server
-      password: "CHANGE-ME"             # password for smtp server
+# If prometheus is used, describe if the predefined AlertManager, PrometheusRule and ServiceMonitor should be deployed as well
+prometheus:
+  enabled: true
+  alertConfig:
+    severity: warning # minimum level of severity for notification
+      # List of email configurations. Example using gmail
+    emails:
+        - name: user                        # name of the config
+          to: user@gmail.com                # email to send notifications to
+          from: reveiver@example.com        # email to send notifications from
+          smtp: smtp.gmail.com:587          # smtp server and port
+          username: user@gmail.com          # identity for smtp server
+          password: "CHANGE-ME"             # password for smtp server
       # See https://support.google.com/accounts/answer/185833?hl=en for more info on Gmail app passwords
 
-kube-prometheus-stack:
-  prometheus:
-    prometheusSpec:
-      externalUrl: http://localhost/prometheus
-      routePrefix: /prometheus
+# If grafana is used, describe if the predefined dashboards in "dashboards" should be deployed as well
+grafana:
+  enabled: true
 
-  alertmanager:
-    config:
-      global:
-        resolve_timeout: 1m
-        # Default smpt server. Ideally same as one of the configs above, but it does not matter
-        # since it will use the values from the config.
-        # However, the alertmanager refuses to start if there is at least one email reveiver
-        # and not a global default smtp server. https://github.com/prometheus/alertmanager/issues/275
-        smtp_smarthost: smtp.gmail.com:587
-
-  # Grafana configuration
-  grafana:
-    env:
-      GF_SERVER_ROOT_URL: https://localhost:3000/grafana
-      GF_SERVER_SERVE_FROM_SUB_PATH: 'true'
-    # username is 'admin'
-    adminPassword: prom-operator
-    defaultDashboardsEnabled: false
+# If istio is used, describe if the predefined DestinationRule, EnvoyFilter, Gateway and VirtualService should be deployed as well
+istio:
+  enabled: true

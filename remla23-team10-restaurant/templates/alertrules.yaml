@@ -1,3 +1,4 @@
+{{if .Values.prometheus.enabled}}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -16,3 +17,4 @@ spec:
           annotations:
             summary: Too many prediction errors
             description: "The rate of prediction errors is greater than 50% in the last minute (current value: {{"{{ $value }}"}})."
+{{end}}

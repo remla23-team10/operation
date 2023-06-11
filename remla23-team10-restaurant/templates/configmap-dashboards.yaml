@@ -1,5 +1,5 @@
 {{- $files := .Files.Glob "dashboards/*.json" }}
-{{- if $files }}
+{{- if and $files .Values.grafana.enabled }}
 apiVersion: v1
 kind: ConfigMapList
 items:
@@ -8,7 +8,7 @@ items:
   - apiVersion: v1
     kind: ConfigMap
     metadata:
-      name: {{ printf "%s-%s" (include "kube-prometheus-stack.fullname" $) $dashboardName | trunc 63 | trimSuffix "-" }}
+      name: {{ $dashboardName}}
       labels:
         grafana_dashboard: "1"
         app: {{ $.Release.Name }}-grafana
