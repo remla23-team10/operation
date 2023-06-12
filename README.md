@@ -55,6 +55,9 @@ If you want to test one version or the other, it is recommended to manually set 
 
 During this experiment, we monitor accuracy scores of both versions, which is obtained from user feedback. If our hypothesis is correct, we should see that the average accuracy of the experimental version should increase with time, given enough review samples and feedback.
 
+### Additional use case: Rate limiting
+We have enforced rate limiting to the webapp using an Istio `EnvoyFilter`. This is local rate limiting using a token bucket.
+
 ## Run the app (A2)
 
 ### Docker compose
