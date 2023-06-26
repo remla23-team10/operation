@@ -11,3 +11,5 @@ spec:
   endpoints:
   - interval: {{.Values.serviceMonitor.interval }}
     path: /actuator/prometheus
+  podTargetLabels:
+    - version
