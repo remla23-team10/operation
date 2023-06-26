@@ -1,3 +1,4 @@
+{{if .Values.prometheus.enabled}}
 apiVersion: monitoring.coreos.com/v1alpha1
 kind: AlertmanagerConfig
 metadata:
@@ -10,13 +11,13 @@ spec:
     receiver: 'smtp'
     matchers:
       - name: severity
-        value: {{ .Values.alertConfig.severity }}
+        value: {{ .Values.prometheus.alertConfig.severity }}
 
 
   receivers:
     - name: 'smtp'
       emailConfigs:
-      {{- range .Values.alertConfig.emails }}
+      {{- range .Values.prometheus.alertConfig.emails }}
         - to: {{.to}}
           from: {{.from}}
           smarthost: {{.smtphost}}
@@ -27,3 +28,4 @@ spec:
             key: {{.name}}
           sendResolved: true
       {{- end}}
+{{end}}
